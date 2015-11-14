@@ -3,7 +3,7 @@
 1) Download relevant fantasy football data from the Yahoo API<br>
 2) Manipulate that data into rankings, dynasty information, and more<br>
 
-Yahoo's support salary style dynasty leagues is largely lackluster, so the tool was designed to compensate for Yahoo's limitations
+Yahoo's support for salary style dynasty leagues is largely lackluster, so the tool was designed to compensate for Yahoo's limitations
 
 <b>API pulls currently supportered:</b><br>
 1) Download various league specific data (number of teams, starting positions, number of roster spots)<br>
