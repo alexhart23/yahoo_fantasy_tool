@@ -13,7 +13,7 @@ Yahoo's support salary style dynasty leagues is largely lackluster, so the tool 
 5) YTD points<br>
 6) TODO: projected points<br>
 7) TODO: Player pool<br>
-8) TODO: Player info<br>
+8) Player info<br>
 
 <b>Data Manipulation (in progress)</b><br>
 1) TODO: Calculate future player salary increases (taking into account special rules for players under rookie contract)<br>
