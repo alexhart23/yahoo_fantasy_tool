@@ -68,7 +68,7 @@ def get_auction_values(session):
     #print(parsed_json['fantasy_content']['leagues']['0']['league'][1]['draft_results']['170']['draft_result']['player_key'])
     num_drafted = parsed_json['fantasy_content']['leagues']['0']['league'][1]['draft_results']['count']
 
-    with open('auction_values.{league_key}.csv'.format(league_key=configs.league_key),'w', newline='') as csvfile:
+    with open('data/auction_values.{league_key}.csv'.format(league_key=configs.league_key),'w', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=',')
         writer.writerow(['player_key','cost'])
         for i in range(0,num_drafted):
@@ -78,7 +78,7 @@ def get_auction_values(session):
 
 def get_current_rosters(session, num_teams):
     print("Getting current rosters...")
-    with open('current_rosters.{league_key}.csv'.format(league_key=configs.league_key),'w', newline='') as csvfile:
+    with open('data/current_rosters.{league_key}.csv'.format(league_key=configs.league_key),'w', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=',')
         writer.writerow(['player_key','team_key'])
         # not starting with 0 in range, so need to add 1 to total teams
@@ -98,7 +98,7 @@ def get_current_rosters(session, num_teams):
 
 def get_managers(session, num_teams):
     print("Getting manager info...")
-    with open('managers.{league_key}.csv'.format(league_key=configs.league_key),'w', newline='') as csvfile:
+    with open('data/managers.{league_key}.csv'.format(league_key=configs.league_key),'w', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=',')
         writer.writerow(['team_key','team_name','manager'])
         # not starting with 0 in range, so need to add 1 to total teams
@@ -113,10 +113,10 @@ def get_managers(session, num_teams):
 
 def get_stats(session):
     print("Getting YTD points...")
-    with open('season_stats.{league_key}.csv'.format(league_key=configs.league_key),'w', newline='') as csvfile:
+    with open('data/season_stats.{league_key}.csv'.format(league_key=configs.league_key),'w', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=',')
         writer.writerow(['player_key','points'])
-        rows = csv.DictReader(open('current_rosters.{league_key}.csv'.format(league_key=configs.league_key)))
+        rows = csv.DictReader(open('data/current_rosters.{league_key}.csv'.format(league_key=configs.league_key)))
         for row in rows:
             player_key = row['player_key']
             url = 'http://fantasysports.yahooapis.com/fantasy/v2/league/{league_key}/players;player_keys={player_key}/stats'.format(league_key=configs.league_key,player_key=player_key)
@@ -127,10 +127,10 @@ def get_stats(session):
 
 def get_player_info(session):
     print("Getting player info...")
-    with open('player_info.{league_key}.csv'.format(league_key=configs.league_key),'w', newline='') as csvfile:
+    with open('data/player_info.{league_key}.csv'.format(league_key=configs.league_key),'w', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=',')
         writer.writerow(['player_key','last_name','first_name','pos','team'])
-        rows = csv.DictReader(open('current_rosters.{league_key}.csv'.format(league_key=configs.league_key)))
+        rows = csv.DictReader(open('data/current_rosters.{league_key}.csv'.format(league_key=configs.league_key)))
         for row in rows:
             player_key = row['player_key']
             url = 'http://fantasysports.yahooapis.com/fantasy/v2/player/{player_key}'.format(player_key=player_key)
