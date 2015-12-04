@@ -66,11 +66,10 @@ def calculate_future_salaries(player_key, current_cost=1, current_year=configs.y
             while len(salaries) < configs.years_in_future:
                 if math.ceil(cost * .2) <= 5:
                     cost = int(salaries[-1]) + 5
-                    salaries.append(cost)
                 else:
                     cost = math.ceil(int(salaries[-1]) * 1.2)
-                    salaries.append(cost)
-
+                salaries.append(cost)
+            break
     return salaries
 
 compile_future_salaries()
