@@ -1,3 +1,5 @@
+__author__ = 'Alex Hart'
+
 import sqlite3
 import configs
 import os
