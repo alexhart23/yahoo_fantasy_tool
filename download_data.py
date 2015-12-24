@@ -117,8 +117,8 @@ def get_auction_values(session):
     c = conn.cursor()
     for i in range(0, num_drafted):
         player_key = \
-        parsed_json['fantasy_content']['leagues']['0']['league'][1]['draft_results'][str(i)]['draft_result'][
-            'player_key']
+            parsed_json['fantasy_content']['leagues']['0']['league'][1]['draft_results'][str(i)]['draft_result'][
+                'player_key']
         cost = parsed_json['fantasy_content']['leagues']['0']['league'][1]['draft_results'][str(i)]['draft_result'][
             'cost']
         try:
@@ -256,11 +256,10 @@ def get_stats(session):
     conn = sqlite3.connect(configs.db_name)
     c = conn.cursor()
     c.execute("SELECT player_key FROM players")
-    player_keys = []
+    keys = []
     for row in c:
-        player_keys.append(row[0])
-    # not starting with 0 in range, so need to add 1 to total teams
-    for player_key in player_keys:
+        keys.append(row[0])
+    for player_key in keys:
         url = 'http://fantasysports.yahooapis.com/fantasy/v2/league/{league_key}/players;player_keys={player_key}/stats'.format(
             league_key=configs.league_key, player_key=player_key)
         json_string = session.get(url, params={'format': 'json'}).content
@@ -314,11 +313,11 @@ def get_player_info(session):
 
     conn = sqlite3.connect(configs.db_name)
     c = conn.cursor()
-    c.execute("SELECT player_key FROM current_rosters")
-    player_keys = []
+    c.execute("SELECT player_key,manager_key FROM current_rosters")
+    keys = []
     for row in c:
-        player_keys.append(row[0])
-    for player_key in player_keys:
+        keys.append([row[0], row[1]])
+    for player_key, manager_key in keys:
         url = 'http://fantasysports.yahooapis.com/fantasy/v2/player/{player_key}'.format(
             player_key=player_key)
         json_string = session.get(url, params={'format': 'json'}).content
@@ -333,16 +332,19 @@ def get_player_info(session):
             elif 'editorial_team_abbr' in i:
                 index = parsed_json['fantasy_content']['player'][0].index(i)
                 nfl_team = parsed_json['fantasy_content']['player'][0][index]['editorial_team_abbr']
+
         try:
             print(
-                "Trying to add {}, {}, {}, {}, {} to table".format(player_key,
-                                                                   last_name,
-                                                                   first_name,
-                                                                   pos,
-                                                                   nfl_team))
+                "Trying to add {}, {}, {}, {}, {}, {} to table".format(player_key,
+                                                                       last_name,
+                                                                       first_name,
+                                                                       pos,
+                                                                       nfl_team,
+                                                                       manager_key))
             c.execute(
-                """INSERT OR REPLACE INTO players (player_key, last_name, first_name, position, nfl_team) VALUES ("{}", "{}","{}","{}", "{}")""".format(
-                    player_key, last_name, first_name, pos, nfl_team))
+                """INSERT OR REPLACE INTO players (player_key, last_name, first_name, position, nfl_team, manager_key)
+                VALUES ("{}", "{}","{}","{}", "{}", "{}")""".format(
+                    player_key, last_name, first_name, pos, nfl_team, manager_key))
         except sqlite3.IntegrityError:
             print('ERROR: Player Key \'{}\' already exists'.format(player_key))
 
