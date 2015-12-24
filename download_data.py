@@ -6,6 +6,7 @@ import configs
 import sqlite3
 import os
 import sys
+import csv
 
 if not os.path.isfile(configs.db_name):
     print("{} does not exist. Please create it with 'create_league_db.py'...".format(configs.db_name))
@@ -349,8 +350,28 @@ def get_player_info(session):
     conn.close()
 
 
+def dump_rookie_info():
+    print("Adding rookie info to DB")
+    rows = csv.DictReader(open(
+        'data/rookies.{league_key}.csv'.format(
+            league_key=configs.league_key)))
+    conn = sqlite3.connect(configs.db_name)
+    c = conn.cursor()
+    for row in rows:
+        try:
+            print("Trying to add {}, {}, {} to table".format(row['player_key'], row['cost'], row['year_drafted']))
+            c.execute(
+                """INSERT OR IGNORE INTO rookies (player_key, cost, year) VALUES ("{}", {}, {})""".format(
+                    row['player_key'], row['cost'], row['year_drafted']))
+        except sqlite3.IntegrityError:
+            print('ERROR: Player Key \'{}\' already exists'.format(row['player_key']))
+    conn.commit()
+    conn.close()
+
+
 num_teams, positions, num_roster_spots = get_league_info(session)
 get_managers(session, num_teams)
+dump_rookie_info()
 
 # only run this if auction_values.csv doesn't exist
 get_auction_values(session) #GOOD

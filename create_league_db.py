@@ -42,5 +42,10 @@ c.execute("""CREATE table current_rosters (
          player_key text REFERENCES players(player_key) UNIQUE,
          manager_key text REFERENCES managers(manager_key))""")
 
+c.execute("""CREATE table rookies (
+         player_key text REFERENCES players(player_key) UNIQUE,
+         cost int,
+         year int)""")
+
 conn.commit()
 conn.close()

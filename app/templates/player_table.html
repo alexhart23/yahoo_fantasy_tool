@@ -1,0 +1,18 @@
+<link type="text/css" rel="stylesheet" href="/static/style.css"/>
+
+<table border="1">
+    <tr>
+        <th>Player</th>
+        <th>Pos</th>
+        <th>Team</th>
+        <th>{{ year }} Cost</th>
+    </tr>
+{% for player in players %}
+    <tr>
+        <td>{{ player.last_name }}, {{ player.first_name }}</td>
+        <td>{{ player.position }}</td>
+        <td>{{ player.team }}</td>
+        <td class="price">{{ player.cost }}</td>
+    </tr>
+{% endfor %}
+</table>
