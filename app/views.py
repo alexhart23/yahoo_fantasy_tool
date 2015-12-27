@@ -41,10 +41,10 @@ def rosters():
                     manager=row['manager']) for row in cur.fetchall()],
                      key=lambda k: k['manager'])
     manager_key = None
-    if manager_key is None:
-        manager_key = managers[0]['manager_key']
-    else:
+    try:
         manager_key = request.form["managers"]
+    except:
+        manager_key = managers[0]['manager_key']
     cur = g.db.execute('SELECT last_name,first_name,position,nfl_team,IFNULL("{}_cost",1) as cost '
                        'FROM players LEFT OUTER JOIN auction_values '
                        'ON players.player_key = auction_values.player_key '
