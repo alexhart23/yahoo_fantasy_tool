@@ -124,7 +124,7 @@ def get_auction_values(session):
         try:
             print("Trying to add {}, {} to table".format(player_key, cost))
             c.execute(
-                "INSERT OR IGNORE INTO auction_values (player_key, cost) VALUES ('{}', {})".format(player_key, cost))
+                "INSERT OR IGNORE INTO auction_values (player_key, '{}_cost') VALUES ('{}', {})".format(configs.year, player_key, cost))
         except sqlite3.IntegrityError:
             print('ERROR: Player Key already exists in PRIMARY KEY column {}'.format(player_key))
     conn.commit()
@@ -370,14 +370,36 @@ def dump_rookie_info():
     conn.commit()
     conn.close()
 
+def dump_undrafted_players():
+    print("Adding undrafted players to auction_values")
+    conn = sqlite3.connect(configs.db_name)
+    c = conn.cursor()
+    c.execute("SELECT player_key FROM players")
+    keys = []
+    for row in c:
+        keys.append(row[0])
+    print(keys)
+    for row in keys:
+        print(row)
+        try:
+            print("Trying to add {}, {}to table".format(row, 1))
+            c.execute(
+                """INSERT OR IGNORE INTO auction_values (player_key, '{}_cost') VALUES ("{}", 1)""".format(
+                    configs.year, row))
+        except sqlite3.IntegrityError:
+            print('ERROR: Player Key \'{}\' already exists'.format(row))
+    conn.commit()
+    conn.close()
+
 
 num_teams, positions, num_roster_spots = get_league_info(session)
-get_managers(session, num_teams)
-dump_rookie_info()
+#get_managers(session, num_teams)
+#dump_rookie_info()
 
 # only run this if auction_values.csv doesn't exist
-get_auction_values(session) #GOOD
+#get_auction_values(session) #GOOD
 
-get_current_rosters(session, num_teams) #GOOD
-get_player_info(session)
-get_stats(session)
+#get_current_rosters(session, num_teams) #GOOD
+#get_player_info(session)
+#get_stats(session)
+dump_undrafted_players()
