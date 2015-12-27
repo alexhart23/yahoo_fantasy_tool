@@ -1,5 +1,6 @@
 from flask import g, render_template, request
 from app import app
+import compile_data
 import configs
 import sqlite3
 
@@ -23,16 +24,24 @@ def teardown_request(exception):
 
 @app.route('/players')
 def players():
-    cur = g.db.execute('SELECT last_name,first_name,position,nfl_team,IFNULL("{}_cost",1) as cost '
+    cur = g.db.execute('SELECT * '
                        'FROM players LEFT OUTER JOIN auction_values '
-                       'ON players.player_key = auction_values.player_key'.format(configs.year))
+                       'ON players.player_key = auction_values.player_key '
+                       'LEFT OUTER JOIN managers '
+                       'ON players.manager_key = managers.manager_key ')
     players = sorted([dict(last_name=row['last_name'],
                     first_name=row['first_name'],
                     position=row['position'],
                     team=row['nfl_team'],
-                    cost=row['cost']) for row in cur.fetchall()],
+                    cost1=row['{}_cost'.format(str(configs.year))],    # year1
+                    cost2=row['{}_cost'.format(str(configs.year+1))],  # year2
+                    cost3=row['{}_cost'.format(str(configs.year+2))],  # year3
+                    cost4=row['{}_cost'.format(str(configs.year+3))],  # year4
+                    cost5=row['{}_cost'.format(str(configs.year+4))],  # year5
+                    owner=row['manager']) for row in cur.fetchall()],
                      key=lambda k: k['last_name'])
-    return render_template('players.html', players=players, year=configs.year)
+    years = compile_data.calculate_years_range()
+    return render_template('players.html', players=players, years=years)
 
 @app.route('/rosters', methods=['GET', 'POST'])
 def rosters():
@@ -44,14 +53,22 @@ def rosters():
         manager_key = request.form["managers"]
     except:
         manager_key = managers[0]['manager_key']
-    cur = g.db.execute('SELECT last_name,first_name,position,nfl_team,IFNULL("{}_cost",1) as cost '
+    cur = g.db.execute('SELECT * '
                        'FROM players LEFT OUTER JOIN auction_values '
                        'ON players.player_key = auction_values.player_key '
-                       'WHERE manager_key="{}"'.format(configs.year,manager_key))
+                       'LEFT OUTER JOIN managers '
+                       'ON players.manager_key = managers.manager_key '
+                       'WHERE managers.manager_key="{}"'.format(manager_key))
     players = sorted([dict(last_name=row['last_name'],
                     first_name=row['first_name'],
                     position=row['position'],
                     team=row['nfl_team'],
-                    cost=row['cost']) for row in cur.fetchall()],
+                    cost1=row['{}_cost'.format(str(configs.year))],    # year1
+                    cost2=row['{}_cost'.format(str(configs.year+1))],  # year2
+                    cost3=row['{}_cost'.format(str(configs.year+2))],  # year3
+                    cost4=row['{}_cost'.format(str(configs.year+3))],  # year4
+                    cost5=row['{}_cost'.format(str(configs.year+4))],  # year5
+                    owner=row['manager']) for row in cur.fetchall()],
                      key=lambda k: k['last_name'])
-    return render_template('rosters.html', managers=managers, players=players)
+    years = compile_data.calculate_years_range()
+    return render_template('rosters.html', managers=managers, players=players, years=years)
