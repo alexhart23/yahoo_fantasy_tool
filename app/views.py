@@ -40,7 +40,6 @@ def rosters():
     managers = sorted([dict(manager_key=row['manager_key'],
                     manager=row['manager']) for row in cur.fetchall()],
                      key=lambda k: k['manager'])
-    manager_key = None
     try:
         manager_key = request.form["managers"]
     except:
