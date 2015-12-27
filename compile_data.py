@@ -1,10 +1,7 @@
 __author__ = 'Alex Hart'
 
-import csv
 import configs
 import math
-import pandas as pd
-import glob
 import sqlite3
 
 
