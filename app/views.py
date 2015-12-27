@@ -32,7 +32,7 @@ def players():
                     team=row['nfl_team'],
                     cost=row['cost']) for row in cur.fetchall()],
                      key=lambda k: k['last_name'])
-    return render_template('player_table.html', players=players, year=configs.year)
+    return render_template('players.html', players=players, year=configs.year)
 
 @app.route('/rosters', methods=['GET', 'POST'])
 def rosters():
@@ -40,10 +40,19 @@ def rosters():
     managers = sorted([dict(manager_key=row['manager_key'],
                     manager=row['manager']) for row in cur.fetchall()],
                      key=lambda k: k['manager'])
-    if request.form['managers'] is None:
+    manager_key = None
+    if manager_key is None:
         manager_key = managers[0]['manager_key']
     else:
         manager_key = request.form["managers"]
-    cur = g.db.execute ('SELECT player_key FROM current_rosters WHERE manager_key="{}"'.format(manager_key))
-    roster = sorted([dict(player_key=row['player_key']) for row in cur.fetchall()], key=lambda k: k['player_key'])
-    return render_template('rosters.html', managers=managers, roster=roster)
+    cur = g.db.execute('SELECT last_name,first_name,position,nfl_team,IFNULL("{}_cost",1) as cost '
+                       'FROM players LEFT OUTER JOIN auction_values '
+                       'ON players.player_key = auction_values.player_key '
+                       'WHERE manager_key="{}"'.format(configs.year,manager_key))
+    players = sorted([dict(last_name=row['last_name'],
+                    first_name=row['first_name'],
+                    position=row['position'],
+                    team=row['nfl_team'],
+                    cost=row['cost']) for row in cur.fetchall()],
+                     key=lambda k: k['last_name'])
+    return render_template('rosters.html', managers=managers, players=players)
