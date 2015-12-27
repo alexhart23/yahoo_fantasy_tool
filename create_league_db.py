@@ -9,6 +9,12 @@ if os.path.isfile(configs.db_name):
     print("{} already exists. Exiting...".format(configs.db_name))
     sys.exit(1)
 
+def calculate_years_range(current_year=configs.year):
+    years = [current_year]
+    while len(years) < configs.years_in_future:
+        years.append(years[-1]+1)
+    return years
+
 conn = sqlite3.connect(configs.db_name)
 
 c = conn.cursor()
@@ -28,11 +34,15 @@ c.execute("""CREATE table players (
          last_name text,
          first_name text,
          position text,
-         nfl_team text)""")
+         nfl_team text,
+         manager_key text REFERENCES managers(manager_key))""")
 
 c.execute("""CREATE table auction_values (
-         player_key text REFERENCES players(player_key) UNIQUE,
-         cost int)""")
+         player_key text REFERENCES players(player_key) UNIQUE)""")
+
+years = calculate_years_range()
+for year in years:
+    c.execute("""ALTER TABLE auction_values ADD COLUMN '{}_cost'""".format(year))
 
 c.execute("""CREATE table stats (
          player_key text REFERENCES players(player_key) UNIQUE,

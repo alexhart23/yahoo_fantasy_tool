@@ -5,14 +5,22 @@
         <th>Player</th>
         <th>Pos</th>
         <th>Team</th>
+        {% for year in years %}
         <th>{{ year }} Cost</th>
+        {% endfor %}
+        <th>Owner</th>
     </tr>
 {% for player in players %}
     <tr>
         <td>{{ player.last_name }}, {{ player.first_name }}</td>
         <td>{{ player.position }}</td>
         <td>{{ player.team }}</td>
-        <td class="price">{{ player.cost }}</td>
+        <td class="price">{{ player.cost1 }}</td>
+        <td class="price">{{ player.cost2 }}</td>
+        <td class="price">{{ player.cost3 }}</td>
+        <td class="price">{{ player.cost4 }}</td>
+        <td class="price">{{ player.cost5 }}</td>
+        <td>{{ player.owner }}</td>
     </tr>
 {% endfor %}
 </table>

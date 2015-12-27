@@ -94,7 +94,8 @@ def calculate_future_salaries(player_key, current_cost=1, current_year=configs.y
                 return salaries
                 break
 
-compile_future_salaries()
+if __name__ == "__main__":
+    compile_future_salaries()
 
 
 

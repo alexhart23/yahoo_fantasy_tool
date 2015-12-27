@@ -393,13 +393,13 @@ def dump_undrafted_players():
 
 
 num_teams, positions, num_roster_spots = get_league_info(session)
-#get_managers(session, num_teams)
-#dump_rookie_info()
+get_managers(session, num_teams)
+dump_rookie_info()
 
 # only run this if auction_values.csv doesn't exist
-#get_auction_values(session) #GOOD
+get_auction_values(session) #GOOD
 
-#get_current_rosters(session, num_teams) #GOOD
-#get_player_info(session)
-#get_stats(session)
+get_current_rosters(session, num_teams) #GOOD
+get_player_info(session)
+get_stats(session)
 dump_undrafted_players()
