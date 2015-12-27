@@ -1,4 +1,4 @@
-from flask import g, render_template
+from flask import g, render_template, request
 from app import app
 import configs
 import sqlite3
@@ -23,9 +23,9 @@ def teardown_request(exception):
 
 @app.route('/players')
 def players():
-    cur = g.db.execute('SELECT last_name,first_name,position,nfl_team,IFNULL(cost,1) as cost '
+    cur = g.db.execute('SELECT last_name,first_name,position,nfl_team,IFNULL("{}_cost",1) as cost '
                        'FROM players LEFT OUTER JOIN auction_values '
-                       'ON players.player_key = auction_values.player_key')
+                       'ON players.player_key = auction_values.player_key'.format(configs.year))
     players = sorted([dict(last_name=row['last_name'],
                     first_name=row['first_name'],
                     position=row['position'],
@@ -33,3 +33,17 @@ def players():
                     cost=row['cost']) for row in cur.fetchall()],
                      key=lambda k: k['last_name'])
     return render_template('player_table.html', players=players, year=configs.year)
+
+@app.route('/rosters', methods=['GET', 'POST'])
+def rosters():
+    cur = g.db.execute('SELECT manager_key,manager FROM managers')
+    managers = sorted([dict(manager_key=row['manager_key'],
+                    manager=row['manager']) for row in cur.fetchall()],
+                     key=lambda k: k['manager'])
+    if request.form['managers'] is None:
+        manager_key = managers[0]['manager_key']
+    else:
+        manager_key = request.form["managers"]
+    cur = g.db.execute ('SELECT player_key FROM current_rosters WHERE manager_key="{}"'.format(manager_key))
+    roster = sorted([dict(player_key=row['player_key']) for row in cur.fetchall()], key=lambda k: k['player_key'])
+    return render_template('rosters.html', managers=managers, roster=roster)
