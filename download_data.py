@@ -8,9 +8,10 @@ import os
 import sys
 import csv
 
-if not os.path.isfile(configs.db_name):
-    print("{} does not exist. Please create it with 'create_league_db.py'...".format(configs.db_name))
-    sys.exit(1)
+def check_db():
+    if not os.path.isfile(configs.db_name):
+        print("{} does not exist. Please create it with 'create_league_db.py'...".format(configs.db_name))
+        sys.exit(1)
 
 
 def login():
@@ -43,15 +44,8 @@ def login():
                                      data={'oauth_verifier': pin})
     return session
 
-
-session = login()
-
-
-# age
-
-# ROS projected points
-
 def get_league_info(session):
+    check_db()
     print("Getting league info...")
     url = 'http://fantasysports.yahooapis.com/fantasy/v2/leagues;league_keys={league_key}/settings'.format(
         league_key=configs.league_key)
@@ -92,6 +86,7 @@ def get_league_info(session):
 
 # this only needs to be run once after the draft
 def get_auction_values(session):
+    check_db()
     print("Getting auction values...")
     url = 'http://fantasysports.yahooapis.com/fantasy/v2/leagues;league_keys={league_key}/draftresults'.format(
         league_key=configs.league_key)
@@ -100,18 +95,6 @@ def get_auction_values(session):
     # print(parsed_json['fantasy_content']['leagues']['0']['league'][1]['draft_results']['170']['draft_result']['player_key'])
     num_drafted = parsed_json['fantasy_content']['leagues']['0']['league'][1][
         'draft_results']['count']
-
-    """with open('data/auction_values.{league_key}.csv'.format(
-            league_key=configs.league_key), 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile, delimiter=',')
-        writer.writerow(['player_key', 'cost'])
-        for i in range(0, num_drafted):
-            writer.writerow([parsed_json['fantasy_content']['leagues']['0'][
-                                 'league'][1]['draft_results'][str(i)][
-                                 'draft_result']['player_key'],
-                             parsed_json['fantasy_content']['leagues']['0'][
-                                 'league'][1]['draft_results'][str(i)][
-                                 'draft_result']['cost']])"""
 
     conn = sqlite3.connect(configs.db_name)
     c = conn.cursor()
@@ -132,33 +115,8 @@ def get_auction_values(session):
 
 
 def get_current_rosters(session, num_teams):
+    check_db()
     print("Getting current rosters...")
-    """with open('data/current_rosters.{league_key}.csv'.format(
-            league_key=configs.league_key), 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile, delimiter=',')
-        writer.writerow(['player_key', 'team_key'])
-        # not starting with 0 in range, so need to add 1 to total teams
-        for team in range(1, num_teams + 1):
-            url = 'http://fantasysports.yahooapis.com/fantasy/v2/teams;team_keys={league_key}.t.{team}/roster'.format(
-                league_key=configs.league_key, team=str(team))
-            json_string = session.get(url, params={'format': 'json'}).content
-            parsed_json = json.loads(json_string.decode('utf8'))
-            # need team_key, player_key, first, last, editorial_team_abbr, display_position, eligible_positions
-            team_key = \
-            parsed_json['fantasy_content']['teams']['0']['team'][0][0][
-                'team_key']
-            team_name = \
-            parsed_json['fantasy_content']['teams']['0']['team'][0][2]['name']
-            count = \
-            parsed_json['fantasy_content']['teams']['0']['team'][1]['roster'][
-                '0']['players']['count']
-            players = \
-            parsed_json['fantasy_content']['teams']['0']['team'][1]['roster'][
-                '0']['players']
-
-            for i in range(0, count):
-                writer.writerow([players[str(i)]['player'][0][0]['player_key'],
-                                 team_key])"""
 
     conn = sqlite3.connect(configs.db_name)
     c = conn.cursor()
@@ -185,26 +143,8 @@ def get_current_rosters(session, num_teams):
 
 
 def get_managers(session, num_teams):
+    check_db()
     print("Getting manager info...")
-    """with open('data/managers.{league_key}.csv'.format(
-            league_key=configs.league_key), 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile, delimiter=',')
-        writer.writerow(['team_key', 'team_name', 'manager'])
-        # not starting with 0 in range, so need to add 1 to total teams
-        for team in range(1, num_teams + 1):
-            url = 'http://fantasysports.yahooapis.com/fantasy/v2/teams;team_keys={league_key}.t.{team}'.format(
-                league_key=configs.league_key, team=str(team))
-            json_string = session.get(url, params={'format': 'json'}).content
-            parsed_json = json.loads(json_string.decode('utf8'))
-            team_key = \
-            parsed_json['fantasy_content']['teams']['0']['team'][0][0][
-                'team_key']
-            team_name = \
-            parsed_json['fantasy_content']['teams']['0']['team'][0][2]['name']
-            manager = \
-            parsed_json['fantasy_content']['teams']['0']['team'][0][14][
-                'managers'][0]['manager']['nickname']
-            writer.writerow([team_key, team_name, manager])"""
 
     conn = sqlite3.connect(configs.db_name)
     c = conn.cursor()
@@ -234,24 +174,8 @@ def get_managers(session, num_teams):
 
 
 def get_stats(session):
+    check_db()
     print("Getting YTD points...")
-    """with open('data/season_stats.{league_key}.csv'.format(
-            league_key=configs.league_key), 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile, delimiter=',')
-        writer.writerow(['player_key', 'points'])
-        rows = csv.DictReader(open(
-            'data/current_rosters.{league_key}.csv'.format(
-                league_key=configs.league_key)))
-        for row in rows:
-            player_key = row['player_key']
-            url = 'http://fantasysports.yahooapis.com/fantasy/v2/league/{league_key}/players;player_keys={player_key}/stats'.format(
-                league_key=configs.league_key, player_key=player_key)
-            json_string = session.get(url, params={'format': 'json'}).content
-            parsed_json = json.loads(json_string.decode('utf8'))
-            points = \
-            parsed_json['fantasy_content']['league'][1]['players']['0'][
-                'player'][1]['player_points']['total']
-            writer.writerow([player_key, points])"""
 
     conn = sqlite3.connect(configs.db_name)
     c = conn.cursor()
@@ -277,39 +201,8 @@ def get_stats(session):
 
 
 def get_player_info(session):
+    check_db()
     print("Getting player info...")
-    """with open('data/player_info.{league_key}.csv'.format(
-            league_key=configs.league_key), 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile, delimiter=',')
-        writer.writerow(
-            ['player_key', 'last_name', 'first_name', 'pos', 'team'])
-        rows = csv.DictReader(open(
-            'data/current_rosters.{league_key}.csv'.format(
-                league_key=configs.league_key)))
-        for row in rows:
-            player_key = row['player_key']
-            url = 'http://fantasysports.yahooapis.com/fantasy/v2/player/{player_key}'.format(
-                player_key=player_key)
-            json_string = session.get(url, params={'format': 'json'}).content
-            parsed_json = json.loads(json_string.decode('utf8'))
-            player_key = parsed_json['fantasy_content']['player'][0][0][
-                'player_key']
-            last_name = parsed_json['fantasy_content']['player'][0][2]['name'][
-                'last']
-            first_name = \
-            parsed_json['fantasy_content']['player'][0][2]['name']['first']
-            for i in parsed_json['fantasy_content']['player'][0]:
-                if 'display_position' in i:
-                    index = parsed_json['fantasy_content']['player'][0].index(
-                        i)
-                    pos = parsed_json['fantasy_content']['player'][0][index][
-                        'display_position']
-                elif 'editorial_team_abbr' in i:
-                    index = parsed_json['fantasy_content']['player'][0].index(
-                        i)
-                    team = parsed_json['fantasy_content']['player'][0][index][
-                        'editorial_team_abbr']
-            writer.writerow([player_key, last_name, first_name, pos, team])"""
 
     conn = sqlite3.connect(configs.db_name)
     c = conn.cursor()
@@ -353,6 +246,7 @@ def get_player_info(session):
 
 
 def dump_rookie_info():
+    check_db()
     print("Adding rookie info to DB")
     rows = csv.DictReader(open(
         'data/rookies.{league_key}.csv'.format(
@@ -371,6 +265,7 @@ def dump_rookie_info():
     conn.close()
 
 def dump_undrafted_players():
+    check_db()
     print("Adding undrafted players to auction_values")
     conn = sqlite3.connect(configs.db_name)
     c = conn.cursor()
@@ -390,16 +285,3 @@ def dump_undrafted_players():
             print('ERROR: Player Key \'{}\' already exists'.format(row))
     conn.commit()
     conn.close()
-
-
-num_teams, positions, num_roster_spots = get_league_info(session)
-get_managers(session, num_teams)
-dump_rookie_info()
-
-# only run this if auction_values.csv doesn't exist
-get_auction_values(session) #GOOD
-
-get_current_rosters(session, num_teams) #GOOD
-get_player_info(session)
-get_stats(session)
-dump_undrafted_players()
