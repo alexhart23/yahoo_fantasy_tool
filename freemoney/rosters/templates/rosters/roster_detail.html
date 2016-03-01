@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Free Money - {{ manager }}</td>
+</title>
+</head>
+
+<a href="{% url 'rosters:index' %}">Home</a> |
+<a href="{% url 'rosters:allplayers' %}">All Players</a> |
+<a href="{% url 'rosters:rosters' %}">Rosters</a> |
+<a href="{% url 'rosters:draftpicks' %}">Draft Picks</a>
+<br><br>
+
+<link type="text/css" rel="stylesheet" href="/static/style.css"/>
+
+<b>{{ manager }} Roster</b><br>
+<a href="{% url 'rosters:rosters' %}">Back to Rosters</a><br><br>
+
+<table border="1">
+    <tr>
+        <th>Player</th>
+        <th>Pos</th>
+        <th>Team</th>
+        {% for year in years %}
+        <th>{{ year }} Cost</th>
+        {% endfor %}
+    </tr>
+{% for player in players %}
+    <tr>
+        <td >{{ player.player }}</td>
+        <td>{{ player.player.position }}</td>
+        <td>{{ player.player.nfl_team }}</td>
+        <td class="price">{{ player.cost_2015 }}</td>
+        <td class="price">{{ player.cost_2016 }}</td>
+        <td class="price">{{ player.cost_2017 }}</td>
+        <td class="price">{{ player.cost_2018 }}</td>
+        <td class="price">{{ player.cost_2019 }}</td>
+    </tr>
+{% endfor %}
+{% for pick in picks %}
+    <tr>
+        <td >{{ pick }}</td>
+        <td></td>
+        <td></td>
+        <td class="price">{{ pick.cost }}</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+{% endfor %}
+</table>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Free Money - {{ manager }}</td>
+</title>
+</head>
+
+<a href="{% url 'rosters:index' %}">Home</a> |
+<a href="{% url 'rosters:allplayers' %}">All Players</a> |
+<a href="{% url 'rosters:rosters' %}">Rosters</a> |
+<a href="{% url 'rosters:draftpicks' %}">Draft Picks</a>
+<br><br>
+
+<link type="text/css" rel="stylesheet" href="/static/style.css"/>
+
+<b>{{ year }} Rookie Draft</b><br>
+<a href="{% url 'rosters:draftpicks' %}">Back to Draft Pick Years</a><br><br>
+
+<table border="1">
+    <tr>
+        <th>Round</th>
+        <th>Pick</th>
+        <th>Selection</th>
+        <th>Position</th>
+        <th>Team</th>
+        <th>Cost</th>
+        <th>Owner/Drafter</th>
+        <th><i>Original Owner</i></th>
+    </tr>
+{% for draftpick in draftpicks %}
+    <tr>
+        <td>{{ draftpick.selection_round }}</td>
+        <td>{{ draftpick.pick_number|default_if_none:"" }}</td>
+        <td>{{ draftpick.player|default_if_none:"" }}</td>
+        <td>{{ draftpick.player.position|default_if_none:"" }}</td>
+        <td>{{ draftpick.player.nfl_team|default_if_none:"" }}</td>
+        <td>{{ draftpick.cost|default_if_none:"" }}</td>
+        <td>{{ draftpick.current_owner }}</td>
+        <td><i>{{ draftpick.original_owner }}</i></td>
+    </tr>
+{% endfor %}
+
+</body>
+</html>

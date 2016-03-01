@@ -1,2 +1,2 @@
 rauth
-flask
+django==1.9.2

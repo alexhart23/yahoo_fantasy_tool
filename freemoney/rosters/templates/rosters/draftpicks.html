@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Free Money - Draft Picks</title>
+</head>
+<body>
+
+<a href="{% url 'rosters:index' %}">Home</a> |
+<a href="{% url 'rosters:allplayers' %}">All Players</a> |
+<a href="{% url 'rosters:rosters' %}">Rosters</a> |
+<a href="{% url 'rosters:draftpicks' %}">Draft Picks</a>
+<br><br>
+
+<ul>
+ {% for year in years %}
+     <li><a href="{% url 'rosters:draftpicks_detail' year.year %}">{{ year.year }}</a></li>
+ {% endfor %}
+</ul>
+
+
+</body>
+</html>
