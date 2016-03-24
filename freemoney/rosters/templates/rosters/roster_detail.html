@@ -31,7 +31,6 @@
         <td >{{ player.player }}</td>
         <td>{{ player.player.position }}</td>
         <td>{{ player.player.nfl_team }}</td>
-        <td class="price">{{ player.cost_2015 }}</td>
         <td class="price">{{ player.cost_2016 }}</td>
         <td class="price">{{ player.cost_2017 }}</td>
         <td class="price">{{ player.cost_2018 }}</td>
@@ -43,8 +42,7 @@
         <td >{{ pick }}</td>
         <td></td>
         <td></td>
-        <td class="price">{{ pick.cost }}</td>
-        <td></td>
+        <td class="price">{{ pick.cost|default_if_none:"" }}</td>
         <td></td>
         <td></td>
         <td></td>

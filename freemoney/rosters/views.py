@@ -22,7 +22,7 @@ def roster_detail(request, manager_key):
     picks = models.DraftPick.objects.filter(current_owner_id=manager_key,
                                             year__gte=configs.year,
                                             player_id__isnull=True)
-    years = (2015,2016,2017,2018,2019)
+    years = (2016,2017,2018,2019)
     context = {
         'manager': manager,
         'players': players,
@@ -33,7 +33,7 @@ def roster_detail(request, manager_key):
 
 def allplayers(request):
     players = models.PlayerCost.objects.all()
-    years = (2015,2016,2017,2018,2019)
+    years = (2016,2017,2018,2019)
     context = {
         'players': players,
         'years': years,
