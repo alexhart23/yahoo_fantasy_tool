@@ -32,12 +32,12 @@
     <tr>
         <td>{{ draftpick.selection_round }}</td>
         <td>{{ draftpick.pick_number|default_if_none:"" }}</td>
-        <td>{{ draftpick.player|default_if_none:"" }}</td>
+        <td><a href="http://sports.yahoo.com/nfl/players/{{ draftpick.player.player_id }}">{{ draftpick.player|default_if_none:'' }}</a></td>
         <td>{{ draftpick.player.position|default_if_none:"" }}</td>
-        <td>{{ draftpick.player.nfl_team|default_if_none:"" }}</td>
+        <td>{{ draftpick.player.nfl_team|default_if_none:'' }}</td>
         <td>{{ draftpick.cost|default_if_none:"" }}</td>
-        <td>{{ draftpick.current_owner }}</td>
-        <td><i>{{ draftpick.original_owner }}</i></td>
+        <td><a href="{% url 'rosters:roster_detail' draftpick.current_owner.manager_key %}">{{ draftpick.current_owner }}</a></td>
+        <td><a href="{% url 'rosters:roster_detail' draftpick.original_owner.manager_key %}">{{ draftpick.original_owner }}</a></td>
     </tr>
 {% endfor %}
 

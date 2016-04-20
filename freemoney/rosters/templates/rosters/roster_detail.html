@@ -28,7 +28,7 @@
     </tr>
 {% for player in players %}
     <tr>
-        <td >{{ player.player }}</td>
+        <td><a href="http://sports.yahoo.com/nfl/players/{{ player.player.player_id }}">{{ player.player }}</a></td>
         <td>{{ player.player.position }}</td>
         <td>{{ player.player.nfl_team }}</td>
         <td class="price">{{ player.cost_2016 }}</td>

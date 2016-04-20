@@ -26,14 +26,14 @@
     </tr>
 {% for player in players %}
     <tr>
-        <td >{{ player.player }}</td>
+        <td><a href="http://sports.yahoo.com/nfl/players/{{ player.player.player_id }}">{{ player.player }}</a></td>
         <td>{{ player.player.position }}</td>
         <td>{{ player.player.nfl_team }}</td>
         <td class="price">{{ player.cost_2016 }}</td>
         <td class="price">{{ player.cost_2017 }}</td>
         <td class="price">{{ player.cost_2018 }}</td>
         <td class="price">{{ player.cost_2019 }}</td>
-        <td>{{ player.player.manager }}</td>
+        <td><a href="{% url 'rosters:roster_detail' player.player.manager.manager_key %}">{{ player.player.manager }}</a></td>
     </tr>
 {% endfor %}
 </table>

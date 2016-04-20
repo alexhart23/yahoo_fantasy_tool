@@ -46,6 +46,10 @@ class Player(models.Model):
     def full_name(self):
         return """{} {}""".format(self.first_name, self.last_name)
 
+    @property
+    def player_id(self):
+        return self.player_key.split('.')[-1]
+
 class PlayerStats(models.Model):
     pass
 
