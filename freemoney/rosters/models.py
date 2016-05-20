@@ -31,7 +31,7 @@ class Player(models.Model):
         return self.full_name
 
     class Meta:
-        ordering = ['last_name','first_name']
+        ordering = ['position','last_name','first_name']
 
     player_key = models.CharField(max_length=12, unique=True, primary_key=True)
     last_name = models.CharField(max_length=30)

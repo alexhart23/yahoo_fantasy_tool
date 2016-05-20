@@ -17,5 +17,7 @@ urlpatterns = [
     url(r'^draftpicks/$', views.draftpicks, name='draftpicks'),
     # /draftpicks/<year>/
     url(r'^draftpicks/(?P<year>\d{4})/$', views.draftpicks_detail, name='draftpicks_detail'),
+    # /trades/
+    url(r'^trades/$', views.trades, name='trades'),
 
 ]

@@ -54,3 +54,6 @@ def draftpicks_detail(request, year):
         'year': year,
     }
     return render(request, 'rosters/draftpicks_detail.html', context)
+
+def trades(request):
+    return render(request, 'rosters/trades.html')
