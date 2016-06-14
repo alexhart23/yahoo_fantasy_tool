@@ -20,7 +20,7 @@ class Manager(models.Model):
     class Meta:
         ordering = ['manager_name']
 
-    manager_key = models.CharField(max_length=10, unique=True, primary_key=True)
+    manager_key = models.CharField(max_length=20, unique=True, primary_key=True)
     manager_name = models.CharField(max_length=30, blank=True, null=True)
     team_name = models.CharField(max_length=30, blank=True, null=True)
     creation_date = models.DateTimeField('creation date', default=timezone.now)
